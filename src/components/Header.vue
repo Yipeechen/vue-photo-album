@@ -22,7 +22,7 @@ export default {
   data: () => {
     return {
       title: "Photo Album",
-      isLogin: true,
+      isLogin: false,
       userEmail: "example@email.com"
     };
   },
