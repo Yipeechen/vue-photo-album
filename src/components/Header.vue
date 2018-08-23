@@ -41,7 +41,40 @@ export default {
     },
     handleLogout: function() {
       console.log("logout");
+    },
+    handleAuthState: function(payload) {
+      // contain { action:login/logout } pass from auth-state
+      console.dir(payload);
+      const action = payload.action;
+
+      if (action === 'login'){
+        const sessionData = JSON.parse(localStorage.getItem('photo-album-user'));
+        // 1. change the state of this.isLogin
+        this.isLogin = true;
+        // 2. get this.userEmail for localStorage
+        this.userEmail = sessionData.email;
+      } else if (action === 'logout') {
+        this.isLogin = false;
+        this.userEmail = '';
+      }
     }
+  },
+  created() { //在頁面一開啟時就檢查登入狀態
+    // 1) subscribe 'auth-state' event from bus
+    this.$bus.$on('auth-state', this.handleAuthState);
+
+    // 2) check auth state from local storage
+    // use JSON.parse() to convert obj type
+    const sessionData = JSON.parse(localStorage.getItem('photo-album-user'));
+    if (sessionData) {
+      this.handleAuthState({ action: 'login' });
+    } else {
+      this.handleAuthState({ action: 'logout' });
+    }
+  },
+  beforeDestroy() { 
+    // 只要有使用$on註冊監聽，就需要在元件週期的 beforeDestroy階段，使用$off拆除監聽，避免元件生命週期結束後，event listener持續運作
+    this.$bus.$off('auth-state', this.handleAuthState)
   }
 };
 </script>
