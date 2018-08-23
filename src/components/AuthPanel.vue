@@ -33,6 +33,7 @@ export default {
         email: this.email,
         password: this.password
       };
+      this.$emit("auth-panel-submit", payload); //將使用者輸入帳密發送給父元件
       console.log("submit auth");
       console.dir(payload); // console.dir() 顯示元素物件屬性
     }
