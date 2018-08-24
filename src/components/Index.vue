@@ -2,7 +2,8 @@
   <div class="container">
     <!--  -->
     <div class="item-list photo-container-wrapper" v-for="photo in photos">
-      <itemListElement/>
+      <!-- transfer(props) isLogin to itemListElement -->
+      <itemListElement :isLogin="isLogin" />
     </div>
   </div>
 </template>
@@ -18,6 +19,33 @@ export default {
   },
   components: {
     ItemListElement: ItemListElement
+  },
+  methods: {
+    handleAuthState: function(payload) {
+      const action = payload.action;
+      if (action === 'login') {
+        this.isLogin = true;
+      } else if (action === 'logout') {
+        this.isLogin = false;
+      }
+    }
+  },
+  created() {
+    // 1) listening the 'auth-state' event
+    this.$bus.$on('auth-state', this.handleAuthState);
+
+    // 2) check auth-state from local storage
+    const sessionData = JSON.parse(localStorage.getItem('photo-album-user'));
+    
+    // use !! to comfirm just return boolean
+    if (!!sessionData) {
+      this.handleAuthState({ action:'login' });
+    } else {
+      this.handleAuthState({ action: 'logout' });
+    }
+  },
+  beforeDestroy() {
+    this.$bus.$off('auth-state', this.handleAuthState);
   }
 };
 </script>
