@@ -3,18 +3,24 @@
     <!--  -->
     <div class="item-list photo-container-wrapper" v-for="photo in photos">
       <!-- transfer(props) isLogin to itemListElement -->
-      <itemListElement :isLogin="isLogin" />
+      <item-list-element 
+      :isLogin="isLogin"
+      :id="photo.id"
+      :title="photo.title"
+      :description="photo.description"
+      :url="'http://35.185.111.183'+photo.file_location.url"/>
     </div>
   </div>
 </template>
 
 <script>
 import ItemListElement from '@/components/ItemListElement';
+import axios from 'axios';
 export default {
   data: () => {
     return {
       isLogin: false,
-      photos: [1, 2, 3, 4, 5] //暫時性假資料
+      photos: []
     };
   },
   components: {
@@ -43,6 +49,19 @@ export default {
     } else {
       this.handleAuthState({ action: 'logout' });
     }
+
+    // get photos from api
+    const indexUrl = 'http://35.185.111.183/api/v1/photos';
+    const hostUrl = 'http://35.185.111.183/';
+
+    axios
+      .get(indexUrl, {})
+      .then(res => {
+        this.photos = res.data.data;
+      })
+      .catch(err => {
+        console.error(err.response.data);
+      });
   },
   beforeDestroy() {
     this.$bus.$off('auth-state', this.handleAuthState);
