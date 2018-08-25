@@ -4,7 +4,7 @@
       <ImgDisplay/>
     </div>
     <div class="main-container">
-      <PhotoForm/>
+      <PhotoForm @photo-form-submit="postCreate" />
     </div>
   </div>
 </template>
@@ -17,6 +17,12 @@ export default {
   components: {
     ImgDisplay: ImgDisplay,
     PhotoForm: PhotoForm
+  },
+  methods: {
+    postCreate: (payload) => {
+      // receive form data
+      console.dir(payload);
+    }
   }
 };
 </script>
